@@ -35,10 +35,14 @@ func main() {
 	log.Info("Init Openweathermap service")
 	var forecastService forecast.ForecastService
 	forecastService = forecast.NewOpenweathermap(repo, log)
-	_, err = forecastService.GetForecast(context.Background(), cfg.KEY)
+	forecasts, err := forecastService.GetForecast(context.Background(), cfg.KEY)
 	if err != nil {
 		log.Error("can't get data from API", slog.String("err", err.Error()))
 	}
+	if err := forecastService.SetForecast(context.Background(), forecasts); err != nil {
+		log.Error("can't get data from API", slog.String("err", err.Error()))
+	}
+	log.Info("Set new forecasts")
 }
 
 func InitLogger() *slog.Logger {

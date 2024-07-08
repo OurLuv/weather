@@ -7,6 +7,6 @@ import (
 )
 
 type ForecastService interface {
-	GetForecast(cfg context.Context, key string) ([]model.Forecast, error)
-	SetForecast(cfg context.Context, forecasts []model.Forecast) error
+	GetForecast(ctx context.Context, key string) ([]model.Forecast, error)
+	SetForecast(ctx context.Context, forecasts []model.Forecast) error
 }

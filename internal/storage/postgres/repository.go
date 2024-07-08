@@ -30,7 +30,19 @@ func (r *OpenweathermapRepository) GetAllCities(ctx context.Context) ([]model.Ci
 	return cities, nil
 }
 
-func (r *OpenweathermapRepository) SetForecast(ctx context.Context, cities []model.Forecast) error {
+func (r *OpenweathermapRepository) SetForecast(ctx context.Context, forecasts []model.Forecast) error {
+	query := "INSERT INTO forecasts (city_id, temp, dt, json)  " +
+		"VALUES ($1, $2, $3, $4) " +
+		"ON CONFLICT (city_id, dt) DO UPDATE  " +
+		"SET temp = EXCLUDED.temp, " +
+		"json = EXCLUDED.json"
+	for _, f := range forecasts {
+		if _, err := r.pool.Exec(ctx, query, f.CityId, f.Temperature, f.DateInt, f.JSONStr); err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 }
 

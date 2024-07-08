@@ -62,15 +62,14 @@ func (o *Openweathermap) GetForecast(ctx context.Context, key string) ([]model.F
 			return nil, err
 		}
 		f.CityId = c.Id
+		f.JSONStr = string(data)
 		for _, v := range resp.List {
 			f.DateInt = v.Dt
 			f.Temperature = v.Main.Temp
+			forecasts = append(forecasts, f)
 		}
-		f.JSONStr = string(data)
-		o.log.Debug("Recieved from API", "forecast", f.CityId, f.DateInt, f.Temperature)
-		forecasts = append(forecasts, f)
 	}
-
+	o.log.Debug("Recieved all data from API")
 	return forecasts, nil
 }
 

@@ -8,6 +8,15 @@ CREATE TABLE IF NOT EXISTS cities (
     lon FLOAT
 );
 
+CREATE TABLE IF NOT EXISTS forecasts ( 
+  city_id INTEGER NOT NULL, 
+  temp FLOAT8 NOT NULL, 
+  dt INTEGER NOT NULL, 
+  json JSONB 
+);
+
+ALTER TABLE forecasts ADD CONSTRAINT forecasts_city_id_dt_key UNIQUE (city_id, dt);
+
 INSERT INTO cities (name, country, lat, lon) VALUES ('London', 'GB', 51.5073219, -0.1276474);
 INSERT INTO cities (name, country, lat, lon) VALUES ('Liverpool', 'GB', 53.4071991, -2.99168);
 INSERT INTO cities (name, country, lat, lon) VALUES ('Manchester', 'GB', 53.4794892, -2.2451148);
@@ -18,3 +27,5 @@ INSERT INTO cities (name, country, lat, lon) VALUES ('Leicester', 'GB', 52.6362,
 INSERT INTO cities (name, country, lat, lon) VALUES ('Coventry', 'GB', 52.4081812, -1.510477);
 INSERT INTO cities (name, country, lat, lon) VALUES ('Nottingham', 'GB', 52.9534193, -1.1496461);
 INSERT INTO cities (name, country, lat, lon) VALUES ('Sunderland', 'GB', 54.9058512, -1.3828727);
+
+

@@ -11,7 +11,7 @@ import (
 
 type OpenweathermapStorage interface {
 	GetAllCities(ctx context.Context) ([]model.City, error)
-	SetForecast(ctx context.Context, cities []model.Forecast) error
+	SetForecast(ctx context.Context, forecast []model.Forecast) error
 }
 
 func NewPostgresPool(ctx context.Context, cfg config.Config) (*pgxpool.Pool, error) {
