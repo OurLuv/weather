@@ -14,6 +14,10 @@ type OpenweathermapStorage interface {
 	SetForecast(ctx context.Context, forecast []model.Forecast) error
 }
 
+type ForecastStorage interface {
+	GetCityList(ctx context.Context) ([]model.City, error)
+}
+
 func NewPostgresPool(ctx context.Context, cfg config.Config) (*pgxpool.Pool, error) {
 	coonStr := fmt.Sprintf("postgres://%s:%s@localhost:5432/%s", cfg.User, cfg.Password, cfg.DatabaseName)
 	pool, err := pgxpool.New(ctx, coonStr)
