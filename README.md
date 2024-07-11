@@ -3,7 +3,7 @@
 make build && make run
 ```
 
-## Endpoints examples
+## Request examples
 ### Get city list
 ```bash
 http://localhost:8080/city/list
