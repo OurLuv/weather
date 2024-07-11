@@ -22,6 +22,8 @@ func (h *Handler) InitRoutes() *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/city/list", h.GetCityList).Methods("GET")
+	r.HandleFunc("/city/{id}/short-forecast", h.GetShortForecast).Methods("GET")
+	r.HandleFunc("/test/{id}", h.GetDetailedForecast).Methods("GET")
 
 	return r
 }

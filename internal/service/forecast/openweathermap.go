@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	URLPattern = "https://api.openweathermap.org/data/2.5/forecast?lat=%f&lon=%f&appid=%s"
+	URLPattern = "https://api.openweathermap.org/data/2.5/forecast?lat=%f&lon=%f&appid=%s&units=metric"
 )
 
 type WeatherResponse struct {

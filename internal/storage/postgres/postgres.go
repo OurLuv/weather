@@ -16,6 +16,8 @@ type OpenweathermapStorage interface {
 
 type ForecastStorage interface {
 	GetCityList(ctx context.Context) ([]model.City, error)
+	GetShortForecast(ctx context.Context, cityId int) (*model.Forecast, error)
+	GetDetailedForecast(ctx context.Context, cityId int, dt int) (string, error)
 }
 
 func NewPostgresPool(ctx context.Context, cfg config.Config) (*pgxpool.Pool, error) {
