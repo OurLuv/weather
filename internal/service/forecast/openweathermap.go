@@ -11,7 +11,7 @@ import (
 	"net/http"
 
 	"github.com/OurLuv/weather/internal/model"
-	"github.com/OurLuv/weather/internal/storage/postgres"
+	"github.com/OurLuv/weather/internal/storage"
 )
 
 var (
@@ -29,19 +29,26 @@ type Main struct {
 	Temp float64 `json:"temp"`
 }
 
-type Openweathermap struct {
-	repo postgres.OpenweathermapStorage
+type Openweathermap interface {
+	GetForecast(ctx context.Context, key string) ([]model.Forecast, error)
+	SetForecast(ctx context.Context, forecasts []model.Forecast) error
+	InitService(ctx context.Context, key string)
+}
+
+type OpenweathermapImpl struct {
+	repo storage.OpenweathermapStorage
 	log  *slog.Logger
 }
 
-func (o *Openweathermap) GetForecast(ctx context.Context, key string) ([]model.Forecast, error) {
+// * Getting forecasts from Openwwathermap API
+func (o *OpenweathermapImpl) GetForecast(ctx context.Context, key string) ([]model.Forecast, error) {
 	// getting all cities
 	cities, err := o.repo.GetAllCities(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("[Openweathermap] can't get data from storage: %w", err)
 	}
 
-	// getting forecasts from Openweather API
+	// getting forecasts
 	var forecasts []model.Forecast
 	var f model.Forecast
 	for _, c := range cities {
@@ -73,12 +80,27 @@ func (o *Openweathermap) GetForecast(ctx context.Context, key string) ([]model.F
 	return forecasts, nil
 }
 
-func (o *Openweathermap) SetForecast(ctx context.Context, forecasts []model.Forecast) error {
+// * passing recieved data to storage
+func (o *OpenweathermapImpl) SetForecast(ctx context.Context, forecasts []model.Forecast) error {
 	return o.repo.SetForecast(ctx, forecasts)
 }
 
-func NewOpenweathermap(repo postgres.OpenweathermapStorage, log *slog.Logger) *Openweathermap {
-	return &Openweathermap{
+func (o *OpenweathermapImpl) InitService(ctx context.Context, key string) {
+	forecasts, err := o.GetForecast(ctx, key)
+	if err != nil {
+		o.log.Error("can't get data from API", "err", err.Error())
+		return
+	}
+	if err := o.SetForecast(ctx, forecasts); err != nil {
+		o.log.Error("can't set data", "err", err.Error())
+		return
+	}
+
+	o.log.Info("Forecast is updated")
+}
+
+func NewOpenweathermap(repo storage.OpenweathermapStorage, log *slog.Logger) *OpenweathermapImpl {
+	return &OpenweathermapImpl{
 		repo: repo,
 		log:  log,
 	}

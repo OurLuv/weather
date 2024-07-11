@@ -1,4 +1,4 @@
-package postgres
+package storage
 
 import (
 	"context"
@@ -13,6 +13,7 @@ type ForecastRepository struct {
 	pool *pgxpool.Pool
 }
 
+// * getting cities that have forecast
 func (r *ForecastRepository) GetCityList(ctx context.Context) ([]model.City, error) {
 	var cities []model.City
 	var c model.City
@@ -35,6 +36,7 @@ func (r *ForecastRepository) GetCityList(ctx context.Context) ([]model.City, err
 	return cities, nil
 }
 
+// * getting short forecast for certain city
 func (r *ForecastRepository) GetShortForecast(ctx context.Context, cityId int) (*model.Forecast, error) {
 	var f model.Forecast
 
@@ -65,6 +67,7 @@ func (r *ForecastRepository) GetShortForecast(ctx context.Context, cityId int) (
 	return &f, nil
 }
 
+// * getting detailed forecast for certain city and time
 func (r *ForecastRepository) GetDetailedForecast(ctx context.Context, cityId int, dt int) (string, error) {
 	var jsonStr string
 	query := "SELECT json FROM forecasts WHERE city_id=$1 AND dt = $2"

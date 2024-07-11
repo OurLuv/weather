@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/OurLuv/weather/internal/model"
-	"github.com/OurLuv/weather/internal/storage/postgres"
+	"github.com/OurLuv/weather/internal/storage"
 )
 
 type ForecastService interface {
@@ -15,17 +15,20 @@ type ForecastService interface {
 }
 
 type ForecastServiceImpl struct {
-	repo postgres.ForecastStorage
+	repo storage.ForecastStorage
 }
 
+// * getting cities that have forecast
 func (s *ForecastServiceImpl) GetCityList(ctx context.Context) ([]model.City, error) {
 	return s.repo.GetCityList(ctx)
 }
 
+// * getting short forecast for certain city
 func (s *ForecastServiceImpl) GetShortForecast(ctx context.Context, cityId int) (*model.Forecast, error) {
 	return s.repo.GetShortForecast(ctx, cityId)
 }
 
+// * getting detailed forecast for certain city and time
 func (s *ForecastServiceImpl) GetDetailedForecast(ctx context.Context, cityId int, dt int) (*model.WeatherData, error) {
 
 	// getting data from database
@@ -40,7 +43,7 @@ func (s *ForecastServiceImpl) GetDetailedForecast(ctx context.Context, cityId in
 		return nil, err
 	}
 
-	// getting only needed
+	// pulling only needed
 	for i := range weather.List {
 		if weather.List[i].Dt == dt {
 			weather.Weather = weather.List[i]
@@ -53,7 +56,7 @@ func (s *ForecastServiceImpl) GetDetailedForecast(ctx context.Context, cityId in
 
 }
 
-func NewAPIService(repo postgres.ForecastStorage) *ForecastServiceImpl {
+func NewAPIService(repo storage.ForecastStorage) *ForecastServiceImpl {
 	return &ForecastServiceImpl{
 		repo: repo,
 	}

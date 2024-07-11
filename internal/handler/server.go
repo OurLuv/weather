@@ -17,6 +17,14 @@ func (s *Server) Start() error {
 	return nil
 }
 
+func (s *Server) ShutDown() error {
+	err := s.server.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func NewServer(r http.Handler) *Server {
 	s := &http.Server{
 		Addr:           ":8080",
